@@ -15,7 +15,7 @@ client = openai
 # Password Authentication
 def check_password():
     def password_entered():
-        if st.session_state["password"] == st.secrets["passwords"]["password"]:
+        if st.session_state["password"] == st.secrets["password"]:
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # delete password from session_state
         else:
@@ -59,3 +59,4 @@ if check_password():
                 response = call_chatgpt(full_prompt)
                 if response:
                     st.write(response)
+                    
