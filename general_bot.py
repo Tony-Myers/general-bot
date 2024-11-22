@@ -3,6 +3,8 @@ import openai
 import io
 from PyPDF2 import PdfReader
 from docx import Document
+from warnings import PendingDeprecationWarning
+
 
 # Set OpenAI API key
 openai.api_key = st.secrets["openai"]["api_key"]
