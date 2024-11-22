@@ -65,10 +65,24 @@ if check_password():
                 temperature=temperature,
             )
             content = response.choices[0].message.content
-            return content
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
-            return None
+     try:
+        # Your code that may raise exceptions
+        return content
+    except SpecificExceptionType as e:
+        st.error(f"A specific error occurred: {e}")
+        logging.error(f"SpecificExceptionType: {e}")
+        return None
+    except AnotherExceptionType as e:
+        st.error(f"Another error occurred: {e}")
+        logging.error(f"AnotherExceptionType: {e}")
+        return None
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+        logging.error(f"Unexpected error: {e}")
+        return None
+    finally:
+        # Perform any necessary cleanup here
+        pass
 
     uploaded_file = st.file_uploader("Choose a PDF or Word document", type=["pdf", "docx"])
 
