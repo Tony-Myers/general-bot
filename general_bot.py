@@ -34,16 +34,21 @@ def check_password():
 if check_password():
     st.title("ChatGPT Document Analyzer")
 
-    # Function to extract text from PDF
-    def extract_text_from_pdf(file):
-        reader = PdfReader(file)
-        text = ''
-        for page in reader.pages:
-            text += page.extract_text()
-       
-    uploaded_file = st.file_uploader("Choose a PDF document", type=["pdf"])
+    # Function to extract text from the uploaded PDF
+def extract_text_from_pdf(uploaded_file):
+    # Implement your PDF text extraction logic here
+    return "Extracted text from PDF"
 
-    text = ""
+# Function to call ChatGPT with the provided prompt
+def call_chatgpt(prompt):
+    # Implement your API call to ChatGPT here
+    return f"Response from ChatGPT for prompt: {prompt}"
+
+# File uploader widget
+uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
+
+# Initialize 'text' variable
+text = ""
 
 # If a file is uploaded, extract text and display success message
 if uploaded_file is not None:
