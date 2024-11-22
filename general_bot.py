@@ -1,69 +1,93 @@
 import streamlit as st
 import openai
-import docx2txt
-import PyPDF2
+import io
+from PyPDF2 import PdfReader
+from docx import Document
 
-# Retrieve password and OpenAI API key from Streamlit secrets
-PASSWORD = st.secrets["password"]
-OPENAI_API_KEY = st.secrets["openai_api_key"]
+# Set OpenAI API key
+openai.api_key = st.secrets["openai"]["api_key"]
+client = openai
 
-# Initialize OpenAI API
-openai.api_key = OPENAI_API_KEY
+# Password Authentication
+def check_password():
+    def password_entered():
+        if st.session_state["password"] == st.secrets["passwords"]["app_password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # delete password from session_state
+        else:
+            st.session_state["password_correct"] = False
 
-# Function to authenticate user
-def authenticate():
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        st.error("Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
 
-    if not st.session_state.authenticated:
-        st.title("Login")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if password == PASSWORD:
-                st.session_state.authenticated = True
-                st.experimental_rerun()
-            else:
-                st.error("Invalid password.")
+if check_password():
+    st.title("ChatGPT Document Analyzer")
 
-# Function to extract text from uploaded file
-def extract_text_from_file(uploaded_file):
-    if uploaded_file.type == "application/pdf":
-        reader = PyPDF2.PdfFileReader(uploaded_file)
-        text = ""
-        for page_num in range(reader.numPages):
-            page = reader.getPage(page_num)
+    # Function to extract text from PDF
+    def extract_text_from_pdf(file):
+        reader = PdfReader(file)
+        text = ''
+        for page in reader.pages:
             text += page.extract_text()
         return text
-    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return docx2txt.process(uploaded_file)
-    else:
-        st.error("Unsupported file type.")
-        return None
 
-# Function to process text with ChatGPT
-def process_with_chatgpt(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
-    return response.choices[0].text.strip()
+    # Function to extract text from DOCX
+    def extract_text_from_docx(file):
+        doc = Document(file)
+        text = ''
+        for para in doc.paragraphs:
+            text += para.text + '\n'
+        return text
 
-# Main application logic
-authenticate()
+    # Function to call ChatGPT
+    def call_chatgpt(prompt, model="gpt-4", max_tokens=500, temperature=0.0, retries=2):
+        """Calls the OpenAI API and returns the response as text."""
+        try:
+            response = client.ChatCompletion.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "You are an expert qualitative researcher specializing in Interpretative Phenomenological Analysis (IPA). Please use British English spelling in all responses, including quotes."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_tokens,
+                temperature=temperature,
+            )
+            content = response.choices[0].message.content
+            return content
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+            return None
 
-if st.session_state.get("authenticated"):
-    st.title("Document Processor with ChatGPT")
-    uploaded_file = st.file_uploader("Upload a PDF or Word document", type=["pdf", "docx"])
+    uploaded_file = st.file_uploader("Choose a PDF or Word document", type=["pdf", "docx"])
+
     if uploaded_file is not None:
-        text = extract_text_from_file(uploaded_file)
-        if text:
-            st.text_area("Extracted Text", text, height=300)
-            prompt = st.text_area("Enter your prompt for ChatGPT")
-            if st.button("Process with ChatGPT"):
-                if prompt:
-                    result = process_with_chatgpt(prompt)
-                    st.text_area("ChatGPT Response", result, height=300)
-                else:
-                    st.error("Please enter a prompt.")
-                    
+        if uploaded_file.type == "application/pdf":
+            text = extract_text_from_pdf(uploaded_file)
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            text = extract_text_from_docx(uploaded_file)
+        else:
+            st.error("Unsupported file type.")
+            st.stop()
+        
+        st.success("File uploaded and text extracted successfully.")
+        # Optionally display the extracted text
+        # st.write(text)
+        
+        prompt = st.text_area("Enter your prompt", height=200)
+
+        if st.button("Process"):
+            with st.spinner("Processing..."):
+                full_prompt = prompt + "\n\n" + text
+                response = call_chatgpt(full_prompt)
+                if response:
+                    st.write(response)
