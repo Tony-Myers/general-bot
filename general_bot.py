@@ -49,7 +49,14 @@ if check_password():
 
         prompt = st.text_area("Enter your prompt", height=200)
 
-        
+       if prompt is None or text is None:
+    st.error("Both prompt and text must be provided.")
+else:
+    full_prompt = prompt + "\n\n" + text
+    response = call_chatgpt(full_prompt)
+    if response:
+        st.write(response)
+
         if st.button("Process"):
             with st.spinner("Processing..."):
                 full_prompt = prompt + "\n\n" + text
