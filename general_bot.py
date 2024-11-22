@@ -53,6 +53,15 @@ if uploaded_file is not None:
 # Display the prompt input box
 prompt = st.text_area("Enter your prompt", height=200)
 
+# Combine the prompt and extracted text
+full_prompt = f"{prompt}\n\n{text}"
+
+# Process the combined prompt when the button is clicked
+if st.button("Process"):
+    with st.spinner("Processing..."):
+        response = call_chatgpt(full_prompt)
+        if response:
+            st.write(response)
                     
 def call_chatgpt(prompt):
     """Calls the OpenAI API and returns the response as text."""
