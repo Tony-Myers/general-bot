@@ -38,8 +38,6 @@ if check_password():
 
 
 # Instantiate the OpenAI client
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-
 def call_chatgpt(prompt):
     """Calls the OpenAI API using the latest client library and returns the response."""
     try:
@@ -56,21 +54,28 @@ def call_chatgpt(prompt):
 
 
 
-# Function to extract text from the uploaded PDF
 def extract_text_from_pdf(uploaded_file):
-    # Implement your PDF text extraction logic here
-    return "Extracted text from PDF"
+    reader = PdfReader(uploaded_file)
+    text = ""
+    for page in reader.pages:
+        text += page.extract_text()
+    return text
 
 # Function to call ChatGPT with the provided prompt
 def call_chatgpt(prompt):
-    # Implement your API call to ChatGPT here
-    return f"Response from ChatGPT for prompt: {prompt}"
+    """Calls the OpenAI API using the latest client library and returns the response."""
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"An error occurred: {e}"
 
-# File uploader widget
-uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
-
-# Initialize 'text' variable
-text = ""
 
 # If a file is uploaded, extract text and display success message
 if uploaded_file is not None:
