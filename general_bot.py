@@ -38,7 +38,7 @@ def call_chatgpt(prompt):
     """Calls the OpenAI API using the latest client library and returns the response."""
     try:
         response = client.chat.completions.create(
-            model="o1-mini",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
