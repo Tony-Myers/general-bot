@@ -57,14 +57,15 @@ if check_password():
                 if response:
                     st.write(response)
                     
-    """Calls the OpenAI API and returns the response as text."""
-    def call_chatgpt(prompt, model="gpt-4o", max_tokens=500, temperature=0.7):
+   def call_chatgpt(prompt):
     """Calls the OpenAI API and returns the response as text."""
     try:
-        response = client.chat.completions.create(
-            model=model,
-            max_tokens=max_tokens,
-            temperature=temperature,
-            stop=["}"]
+response = client.chat.completions.create(
+            model=gtp4o
+            prompt=prompt,
+            max_tokens=150,
+            temperature=0.7
         )
-        return text
+        return response.choices[0].text.strip()
+    except Exception as e:
+        return f"An error occurred: {e}"
