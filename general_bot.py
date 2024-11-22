@@ -60,7 +60,7 @@ if check_password():
    def call_chatgpt(prompt):
     """Calls the OpenAI API and returns the response as text."""
     try:
-response = client.chat.completions.create(
+    response = client.chat.completions.create(
             model=gtp4o
             prompt=prompt,
             max_tokens=150,
