@@ -52,18 +52,17 @@ if check_password():
         return text
 
     # Function to call ChatGPT
-    def call_chatgpt(prompt, model="gpt-4", max_tokens=500, temperature=0.0, retries=2):
+    def call_chatgpt(prompt, model="gpt-4", max_tokens=500, temperature=0.6, retries=2):
         """Calls the OpenAI API and returns the response as text."""
         try:
-            response = client.ChatCompletion.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "You are an expert qualitative researcher specializing in Interpretative Phenomenological Analysis (IPA). Please use British English spelling in all responses, including quotes."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=max_tokens,
-                temperature=temperature,
-            )
+             client = OpenAI(api_key=OPENAI_API_KEY)
+        response = client.chat.completions.create(
+            model="model,
+            messages=messages,
+            max_tokens= max_tokens,
+            n=1,
+            temperature=0.6,
+        )
             content = response.choices[0].message.content
         # Your code that may raise exceptions
         return content
