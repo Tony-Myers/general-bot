@@ -4,7 +4,10 @@ from PyPDF2 import PdfReader
 
 # Retrieve password and OpenAI API key from Streamlit secrets
 PASSWORD = st.secrets["password"]
-OPENAI_API_KEY = st.secrets["openai_api_key"]
+OPENAI_API_KEY = st.secrets["api_keys"]["openai"]
+
+# Initialize OpenAI API
+openai.api_key = OPENAI_API_KEY
 
 def check_password():
     def password_entered():
