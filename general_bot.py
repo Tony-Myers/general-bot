@@ -1,5 +1,6 @@
 import streamlit as st
 import openai
+from openai import OpenAI
 from PyPDF2 import PdfReader
 
 
@@ -35,18 +36,25 @@ if check_password():
     st.title("ChatGPT Document Analyzer")
 
     # Function to extract text from the uploaded PDF
+
+
+# Instantiate the OpenAI client
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
 def call_chatgpt(prompt):
-    """Calls the OpenAI API and returns the response as text."""
+    """Calls the OpenAI API using the latest client library and returns the response."""
     try:
         response = client.chat.completions.create(
-            model='gpt-4o',  # Replace with your model
-            prompt=prompt,
-            max_tokens=150,
-            temperature=0.7
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
         )
-        return response.choices[0].text.strip()
+        return response.choices[0].message.content
     except Exception as e:
         return f"An error occurred: {e}"
+
 
 
 # Function to extract text from the uploaded PDF
