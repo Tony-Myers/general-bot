@@ -2,15 +2,13 @@ import streamlit as st
 import openai
 from PyPDF2 import PdfReader
 
+
 # Retrieve password and OpenAI API key from Streamlit secrets
 PASSWORD = st.secrets["password"]
+OPENAI_API_KEY = st.secrets["openai_api_key"]
 
 # Initialize OpenAI API
 openai.api_key = OPENAI_API_KEY
-# Set OpenAI API key
-openai.api_key = st.secrets["openai_api_key"]
-client = openai
-
 # Password Authentication
 def check_password():
     def password_entered():
