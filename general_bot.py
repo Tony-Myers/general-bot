@@ -86,7 +86,7 @@ prompt = st.text_area("Enter your prompt", height=200)
 # Process the combined prompt when the button is clicked
 if st.button("Process"):
     with st.spinner("Processing..."):
-        full_prompt = f"{prompt}\n\n{text}"
+        full_prompt = prompt + "\n\n" + text
         response = call_chatgpt(full_prompt)
         if response:
             st.write(response)
