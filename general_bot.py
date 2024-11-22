@@ -40,8 +40,7 @@ if check_password():
         text = ''
         for page in reader.pages:
             text += page.extract_text()
-        return text
-
+       
     uploaded_file = st.file_uploader("Choose a PDF document", type=["pdf"])
 
     if uploaded_file is not None:
@@ -50,6 +49,7 @@ if check_password():
 
         prompt = st.text_area("Enter your prompt", height=200)
 
+        
         if st.button("Process"):
             with st.spinner("Processing..."):
                 full_prompt = prompt + "\n\n" + text
@@ -57,3 +57,14 @@ if check_password():
                 if response:
                     st.write(response)
                     
+    """Calls the OpenAI API and returns the response as text."""
+    t def call_chatgpt(prompt, model="gpt-4o", max_tokens=500, temperature=0.0, retries=2):
+    """Calls the OpenAI API and returns the response as text."""
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            stop=["}"]
+        )
+        return text
