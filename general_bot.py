@@ -48,11 +48,10 @@ if check_password():
         st.success("File uploaded and text extracted successfully.")
 
         prompt = st.text_area("Enter your prompt", height=200)
-
-       if prompt is None or text is None:
+    if prompt is None or text is None:
     st.error("Both prompt and text must be provided.")
 else:
-    full_prompt = prompt + "\n\n" + text
+    full_prompt = f"{prompt or ''}\n\n{text or ''}"
     response = call_chatgpt(full_prompt)
     if response:
         st.write(response)
