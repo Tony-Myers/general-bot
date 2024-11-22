@@ -43,24 +43,16 @@ if check_password():
        
     uploaded_file = st.file_uploader("Choose a PDF document", type=["pdf"])
 
-    if uploaded_file is not None:
-        text = extract_text_from_pdf(uploaded_file)
-        st.success("File uploaded and text extracted successfully.")
+    text = ""
 
-        prompt = st.text_area("Enter your prompt", height=200)
+# If a file is uploaded, extract text and display success message
+if uploaded_file is not None:
+    text = extract_text_from_pdf(uploaded_file)
+    st.success("File uploaded and text extracted successfully.")
 
-else:
-    full_prompt = f"{prompt or ''}\n\n{text or ''}"
-    response = call_chatgpt(full_prompt)
-    if response:
-        st.write(response)
+# Display the prompt input box
+prompt = st.text_area("Enter your prompt", height=200)
 
-        if st.button("Process"):
-            with st.spinner("Processing..."):
-                full_prompt = prompt + "\n\n" + text
-                response = call_chatgpt(full_prompt)
-                if response:
-                    st.write(response)
                     
 def call_chatgpt(prompt):
     """Calls the OpenAI API and returns the response as text."""
