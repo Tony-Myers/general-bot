@@ -9,7 +9,7 @@ OPENAI_API_KEY = st.secrets["api_keys"]["openai"]
 # Initialize OpenAI API
 openai.api_key = OPENAI_API_KEY
 # Set OpenAI API key
-openai.api_key = st.secrets["openai"]["api_key"]
+openai.api_key = st.secrets["openai"]["openai_api_key"]
 client = openai
 
 # Password Authentication
