@@ -53,9 +53,6 @@ if check_password():
 
     # Function to call ChatGPT
     def call_chatgpt(prompt, model="gpt-4o", max_tokens=500, temperature=0.6, retries=2):
-        return ""
-            content = response.choices[0].message.content
-        # Your code that may raise exceptions
         return content
     except SpecificExceptionType as e:
         st.error(f"A specific error occurred: {e}")
