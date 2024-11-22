@@ -35,6 +35,21 @@ if check_password():
     st.title("ChatGPT Document Analyzer")
 
     # Function to extract text from the uploaded PDF
+def call_chatgpt(prompt):
+    """Calls the OpenAI API and returns the response as text."""
+    try:
+        response = client.chat.completions.create(
+            model='gpt-4o',  # Replace with your model
+            prompt=prompt,
+            max_tokens=150,
+            temperature=0.7
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+
+# Function to extract text from the uploaded PDF
 def extract_text_from_pdf(uploaded_file):
     # Implement your PDF text extraction logic here
     return "Extracted text from PDF"
@@ -54,30 +69,19 @@ text = ""
 if uploaded_file is not None:
     text = extract_text_from_pdf(uploaded_file)
     st.success("File uploaded and text extracted successfully.")
+else:
+    st.warning("Please upload a PDF file to proceed.")
 
 # Display the prompt input box
 prompt = st.text_area("Enter your prompt", height=200)
 
-# Combine the prompt and extracted text
-full_prompt = f"{prompt}\n\n{text}"
-
 # Process the combined prompt when the button is clicked
 if st.button("Process"):
     with st.spinner("Processing..."):
+        full_prompt = f"{prompt}\n\n{text}"
         response = call_chatgpt(full_prompt)
         if response:
             st.write(response)
+
                     
-def call_chatgpt(prompt):
-    """Calls the OpenAI API and returns the response as text."""
-    try:
-        response = client.chat.completions.create(
-            model='gpt-4o',  # Replace with your model
-            prompt=prompt,
-            max_tokens=150,
-            temperature=0.7
-        )
-        return response.choices[0].text.strip()
-    except Exception as e:
-        return f"An error occurred: {e}"
 
