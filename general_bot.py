@@ -51,11 +51,6 @@ if check_password():
             text += para.text + '\n'
         return text
 
-    # Function to call ChatGPT
-    def call_chatgpt(prompt, model="gpt-4o", max_tokens=500, temperature=0.6, retries=2):
-        return content
-  
-
     uploaded_file = st.file_uploader("Choose a PDF or Word document", type=["pdf", "docx"])
 
     if uploaded_file is not None:
