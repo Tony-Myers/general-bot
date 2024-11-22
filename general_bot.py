@@ -65,7 +65,7 @@ if check_password():
                 temperature=temperature,
             )
             content = response.choices[0].message.content
-     try:
+         try:
         # Your code that may raise exceptions
         return content
     except SpecificExceptionType as e:
