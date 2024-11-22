@@ -14,16 +14,19 @@ openai.api_key = OPENAI_API_KEY
 
 # Function to authenticate user
 def authenticate():
-    st.session_state["authenticated"] = False
-    st.title("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if username == USERNAME and password == PASSWORD:
-            st.session_state["authenticated"] = True
-            st.success("Authentication successful.")
-        else:
-            st.error("Invalid username or password.")
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if not st.session_state.authenticated:
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username == USERNAME and password == PASSWORD:
+                st.session_state.authenticated = True
+                st.experimental_rerun()
+            else:
+                st.error("Invalid username or password.")
 
 # Function to extract text from uploaded file
 def extract_text_from_file(uploaded_file):
@@ -50,8 +53,7 @@ def process_with_chatgpt(prompt):
     return response.choices[0].text.strip()
 
 # Main application logic
-if "authenticated" not in st.session_state:
-    authenticate()
+authenticate()
 
 if st.session_state.get("authenticated"):
     st.title("Document Processor with ChatGPT")
@@ -67,3 +69,4 @@ if st.session_state.get("authenticated"):
                     st.text_area("ChatGPT Response", result, height=300)
                 else:
                     st.error("Please enter a prompt.")
+                    
