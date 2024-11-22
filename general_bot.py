@@ -66,3 +66,4 @@ if st.session_state.get("authenticated"):
                     st.text_area("ChatGPT Response", result, height=300)
                 else:
                     st.error("Please enter a prompt.")
+                    
