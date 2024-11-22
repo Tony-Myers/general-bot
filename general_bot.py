@@ -2,12 +2,10 @@ import streamlit as st
 import openai
 import docx2txt
 import PyPDF2
-import io
 
-# Retrieve credentials and API key from Streamlit secrets
-USERNAME = st.secrets["credentials"]["username"]
-PASSWORD = st.secrets["credentials"]["password"]
-OPENAI_API_KEY = st.secrets["api_keys"]["openai"]
+# Retrieve password and OpenAI API key from Streamlit secrets
+PASSWORD = st.secrets["password"]
+OPENAI_API_KEY = st.secrets["openai_api_key"]
 
 # Initialize OpenAI API
 openai.api_key = OPENAI_API_KEY
@@ -19,14 +17,13 @@ def authenticate():
 
     if not st.session_state.authenticated:
         st.title("Login")
-        username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
-            if username == USERNAME and password == PASSWORD:
+            if password == PASSWORD:
                 st.session_state.authenticated = True
                 st.experimental_rerun()
             else:
-                st.error("Invalid username or password.")
+                st.error("Invalid password.")
 
 # Function to extract text from uploaded file
 def extract_text_from_file(uploaded_file):
@@ -69,4 +66,3 @@ if st.session_state.get("authenticated"):
                     st.text_area("ChatGPT Response", result, height=300)
                 else:
                     st.error("Please enter a prompt.")
-                    
